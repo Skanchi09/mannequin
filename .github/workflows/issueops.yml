@@ -1,4 +1,4 @@
-name: IssueOps - Execute Mapping Script
+name: IssueOps - Execute Mapping Scripts
 
 on:
   issue_comment:

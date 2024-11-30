@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import csv
 
-# Access the environment variables
+# Access the environment variabless
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Set in GitHub Secrets
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")  # Non-sensitive, from GitHub Variables
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")  # Non-sensitive, from GitHub Variables
