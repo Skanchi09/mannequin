@@ -1,0 +1,32 @@
+name: Run Migration
+description: Execute Mannequin reclaim Process
+title: "Mannequin Reclaim"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide the following details to execute the migration:
+  - type: input
+    id: org_name
+    attributes:
+      label: Organization Name
+      description: Enter the name of the GitHub organization (e.g., mgmri-dge).
+      placeholder: mgmri-dge
+    validations:
+      required: true
+  - type: input
+    id: emu_users_file
+    attributes:
+      label: Excel File Path
+      description: Path to the Excel file containing user details.
+      placeholder: MGM Resorts GitHub Enterprise Users - 11-06-24.xlsx
+    validations:
+      required: true
+  - type: input
+    id: user_mappings_file
+    attributes:
+      label: CSV File Path
+      description: Path to the CSV file generated after repository migration.
+      placeholder: user-mappings-template.csv
+    validations:
+      required: true
