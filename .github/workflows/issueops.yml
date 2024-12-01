@@ -1,4 +1,4 @@
-name: IssueOps - Execute Reclaim Scripts
+name: Execute Migration Script
 
 on:
   issue_comment:
@@ -7,26 +7,39 @@ on:
 jobs:
   issueops:
     runs-on: ubuntu-latest
+
     steps:
-      # Check out the repository
+      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up python environment
+      # Step 2: Set up Python environment
+      - name: Set up Python 3.x
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install dependicies
+      # Step 3: Install dependencies
+      - name: Install dependencies
         run: |
-          python - m pip install --upgrade pip
-          pip install pandas    
+          python -m pip install --upgrade pip
+          pip install pandas
 
-      # Extract parameters from the issue comment
+      # Step 4: Check if comment contains '/run-reclaim'
+      - name: Check for /run-reclaim command
+        id: check-command
+        run: |
+          if [[ "${{ github.event.comment.body }}" == *"/run-reclaim"* ]]; then
+            echo "Reclaim command found in the comment"
+          else
+            echo "No reclaim command found, skipping job."
+            exit 0  # Exit early if no reclaim command
+          fi
+
+      # Step 5: Extract parameters from the issue comment
       - name: Extract parameters from comment
         id: extract-params
         run: |
-          # Extract the file names and org name from the comment
           EMU_USERS_FILE=$(echo '${{ github.event.comment.body }}' | grep -oP '(?<=--emu-users-file=)[^ ]+' | tr -d '"')
           USER_MAPPINGS_FILE=$(echo '${{ github.event.comment.body }}' | grep -oP '(?<=--user-mappings-file=)[^ ]+' | tr -d '"')
           ORG_NAME=$(echo '${{ github.event.comment.body }}' | grep -oP '(?<=--org-name=)[^ ]+')
@@ -41,7 +54,11 @@ jobs:
           echo "USER_MAPPINGS_FILE=$USER_MAPPINGS_FILE" >> $GITHUB_ENV
           echo "ORG_NAME=$ORG_NAME" >> $GITHUB_ENV
 
-      # Run Python script
+      # Step 6: Run the migration script
       - name: Run migration script
         run: |
+          echo "Running migration script with the following variables:"
+          echo "EMU_USERS_FILE: $EMU_USERS_FILE"
+          echo "USER_MAPPINGS_FILE: $USER_MAPPINGS_FILE"
+          echo "ORG_NAME: $ORG_NAME"
           python mapping.py
