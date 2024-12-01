@@ -35,6 +35,9 @@ jobs:
           && sudo apt update \
           && sudo apt install gh -y
 
+      - name: Install GitHub Enterprise Importer
+        run: gh extension install github/gh-gei    
+
       - name: Check for /run-reclaim command
         id: check-command
         run: |
