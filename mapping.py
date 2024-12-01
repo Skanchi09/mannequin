@@ -60,7 +60,7 @@ def process_user_mappings(user_mappings_file, emu_users_df, org_suffix):
     update_csv_file(user_mappings_file, mappings)
 
 def run_reclaim_command(org_name, csv_file):
-    command = f"gh gei reclaim-mannequin --github-target-org {org_name} --csv {csv_file}"
+    command = f"gh gei reclaim-mannequin --github-target-org {org_name} --csv {csv_file} --github-target-pat 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"
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
         print("Reclaim command executed successfully:")
