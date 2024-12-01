@@ -1,4 +1,3 @@
-
 name: Execute Migration Script
 
 on:
@@ -8,6 +7,8 @@ on:
 jobs:
   issueops:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -27,28 +28,30 @@ jobs:
         id: check-command
         run: |
           if echo "${{ github.event.comment.body }}" | grep -q "/run-reclaim"; then
-            echo "Reclaim command found in the comment"
+            echo "COMMAND_FOUND=true" >> $GITHUB_ENV
           else
-            echo "No reclaim command found, skipping job."
-            exit 0
+            echo "COMMAND_FOUND=false" >> $GITHUB_ENV
           fi
 
       - name: Extract parameters from comment
+        if: env.COMMAND_FOUND == 'true'
         id: extract-params
         run: |
           EMU_USERS_FILE=$(echo '${{ github.event.comment.body }}' | grep -oP '(?<=--emu-users-file=")[^"]+')
           USER_MAPPINGS_FILE=$(echo '${{ github.event.comment.body }}' | grep -oP '(?<=--user-mappings-file=")[^"]+')
           ORG_NAME=$(echo '${{ github.event.comment.body }}' | grep -oP '(?<=--org-name=")[^"]+')
 
-          echo "EMU_USERS_FILE: $EMU_USERS_FILE"
-          echo "USER_MAPPINGS_FILE: $USER_MAPPINGS_FILE"
-          echo "ORG_NAME: $ORG_NAME"
-
           echo "EMU_USERS_FILE=$EMU_USERS_FILE" >> $GITHUB_ENV
           echo "USER_MAPPINGS_FILE=$USER_MAPPINGS_FILE" >> $GITHUB_ENV
           echo "ORG_NAME=$ORG_NAME" >> $GITHUB_ENV
 
       - name: Run migration script
+        if: env.COMMAND_FOUND == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EMU_USERS_FILE: ${{ env.EMU_USERS_FILE }}
+          USER_MAPPINGS_FILE: ${{ env.USER_MAPPINGS_FILE }}
+          ORG_NAME: ${{ env.ORG_NAME }}
         run: |
           echo "Running migration script with the following variables:"
           echo "EMU_USERS_FILE: $EMU_USERS_FILE"
