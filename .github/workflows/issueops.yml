@@ -29,7 +29,7 @@ jobs:
       - name: Check for /run-reclaim command
         id: check-command
         run: |
-          if [[ "${{ github.event.comment.body }}" == *"/run-reclaim"* ]]; then
+          if [[ "${{ github.event.comment.body }}" =~ /run-reclaim ]]; then
             echo "Reclaim command found in the comment"
           else
             echo "No reclaim command found, skipping job."
