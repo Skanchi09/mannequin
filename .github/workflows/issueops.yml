@@ -1,4 +1,4 @@
-name: Execute Migration Script
+name: Execute Reclaim Script
 
 on:
   issue_comment:
@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      organization-projects: read
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -37,7 +38,10 @@ jobs:
           && sudo apt install gh -y
 
       - name: Install GitHub Enterprise Importer
-        run: gh extension install github/gh-gei    
+        run: gh extension install github/gh-gei
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Check for /run-reclaim command
         id: check-command
@@ -72,7 +76,7 @@ jobs:
           echo "EMU_USERS_FILE: $EMU_USERS_FILE"
           echo "USER_MAPPINGS_FILE: $USER_MAPPINGS_FILE"
           echo "ORG_NAME: $ORG_NAME"
-          python mapping.py
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} python mapping.py
 
       - name: Commit and push changes
         if: env.COMMAND_FOUND == 'true'

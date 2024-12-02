@@ -11,7 +11,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")
 ORG_NAME = os.getenv("ORG_NAME")
-gh_pat = os.getenv("gh_pat")
+github_pat = os.getenv("GITHUB_TOKEN")
 
 # Extract base organization name (e.g., 'mgmri' from 'mgmri-dge')
 ORG_SUFFIX = ORG_NAME.split('-')[0] if ORG_NAME else ''
@@ -62,15 +62,17 @@ def process_user_mappings(user_mappings_file, emu_users_df, org_suffix):
 
     update_csv_file(user_mappings_file, mappings)
 
-# def run_reclaim_command(org_name, csv_file):
-#     command = f"gh gei reclaim-mannequin --github-target-org {org_name} --csv {csv_file}"
-#     try:
-#         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-#         print("Reclaim command executed successfully:")
-#         print(result.stdout)
-#     except subprocess.CalledProcessError as e:
-#         print(f"Error executing reclaim command: {e}")
-#         print(f"Error output: {e.stderr}")
+def verify_organization(org_name, gh_pat):
+    command = f"gh api orgs/{org_name} --header 'Authorization: token {gh_pat}'"
+    try:
+        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        print(f"Organization {org_name} verified successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"Error verifying organization: {e}")
+        print(f"Command: {e.cmd}")
+        print(f"Return code: {e.returncode}")
+        print(f"Output: {e.output}")
+        print(f"Error output: {e.stderr}")
 
 def run_reclaim_command(org_name, csv_file, gh_pat):
     command = f"gh gei reclaim-mannequin --github-target-org {org_name} --csv {csv_file} --github-target-pat {gh_pat}"
@@ -80,17 +82,20 @@ def run_reclaim_command(org_name, csv_file, gh_pat):
         print(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Error executing reclaim command: {e}")
+        print(f"Command: {e.cmd}")
+        print(f"Return code: {e.returncode}")
+        print(f"Output: {e.output}")
         print(f"Error output: {e.stderr}")
-        
 
 def main():
     print("Executing migration script...")
+    print(f"GITHUB_TOKEN: {'Set' if GITHUB_TOKEN else 'Not Set'}")
+    print(f"ORG_NAME: {ORG_NAME}")
+    print(f"EMU_USERS_FILE: {EMU_USERS_FILE}")
+    print(f"USER_MAPPINGS_FILE: {USER_MAPPINGS_FILE}")
+
     if not all([GITHUB_TOKEN, EMU_USERS_FILE, USER_MAPPINGS_FILE, ORG_NAME]):
         print("Missing required environment variables. Ensure they are set correctly.")
-        print(f"GITHUB_TOKEN: {'Set' if GITHUB_TOKEN else 'Not Set'}")
-        print(f"EMU_USERS_FILE: {EMU_USERS_FILE}")
-        print(f"USER_MAPPINGS_FILE: {USER_MAPPINGS_FILE}")
-        print(f"ORG_NAME: {ORG_NAME}")
         sys.exit(1)
 
     try:
@@ -101,8 +106,11 @@ def main():
         
         process_user_mappings(USER_MAPPINGS_FILE, emu_users_df, ORG_SUFFIX)
         
+        # Verify organization before running reclaim command
+        verify_organization(ORG_NAME, github_pat)
+        
         # Run the reclaim command after updating the CSV
-        run_reclaim_command(ORG_NAME, USER_MAPPINGS_FILE, gh_pat)
+        run_reclaim_command(ORG_NAME, USER_MAPPINGS_FILE, github_pat)
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         sys.exit(1)
