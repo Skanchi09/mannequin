@@ -102,7 +102,7 @@ def main():
         process_user_mappings(USER_MAPPINGS_FILE, emu_users_df, ORG_SUFFIX)
         
         # Run the reclaim command after updating the CSV
-        run_reclaim_command(ORG_NAME, USER_MAPPINGS_FILE, github_pat)
+        run_reclaim_command(ORG_NAME, USER_MAPPINGS_FILE, gh_pat)
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         sys.exit(1)
