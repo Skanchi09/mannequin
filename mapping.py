@@ -11,7 +11,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")
 ORG_NAME = os.getenv("ORG_NAME")
-github_pat = os.getenv("GITHUB_TOKEN")
+gh_pat = os.getenv("gh_pat")
 
 # Extract base organization name (e.g., 'mgmri' from 'mgmri-dge')
 ORG_SUFFIX = ORG_NAME.split('-')[0] if ORG_NAME else ''
