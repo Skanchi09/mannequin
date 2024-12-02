@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      organization-projects: read
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,6 +62,9 @@ jobs:
           echo "EMU_USERS_FILE=$EMU_USERS_FILE" >> $GITHUB_ENV
           echo "USER_MAPPINGS_FILE=$USER_MAPPINGS_FILE" >> $GITHUB_ENV
           echo "ORG_NAME=$ORG_NAME" >> $GITHUB_ENV
+
+      - name: List directory contents
+        run: ls -R
 
       - name: Run migration script
         if: env.COMMAND_FOUND == 'true'
