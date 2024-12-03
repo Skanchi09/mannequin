@@ -1,0 +1,104 @@
+[2024-12-03 22:42:43] [DEBUG] HTTP GET: https://www.githubstatus.com/api/v2/incidents/unresolved.json
+[2024-12-03 22:42:44] [DEBUG] RESPONSE (OK): {"page":{"id":"kctbh9vrtdwd","name":"GitHub","url":"https://www.githubstatus.com","time_zone":"Etc/UTC","updated_at":"2024-12-03T20:21:04.179Z"},"incidents":[]}
+[2024-12-03 22:42:44] [DEBUG] HTTP GET: https://raw.githubusercontent.com/github/gh-gei/main/LATEST-VERSION.txt
+[2024-12-03 22:42:44] [DEBUG] RESPONSE (OK): v1.10.0
+
+[2024-12-03 22:42:44] [INFO] You are running an up-to-date version of the gei CLI [v1.10.0]
+[2024-12-03 22:42:44] [INFO] GITHUB ORG: mgmri-dge
+[2024-12-03 22:42:44] [INFO] GITHUB PAT: ***
+[2024-12-03 22:42:44] [INFO] CSV: user-mappings-template.csv
+[2024-12-03 22:42:44] [INFO] Reclaiming Mannequins with CSV...
+[2024-12-03 22:42:44] [DEBUG] HTTP POST: https://api.github.com/graphql
+[2024-12-03 22:42:45] [DEBUG] HTTP BODY: {"query":"query($login: String!) {organization(login: $login) { login, id, name } }","variables":{"login":"mgmri-dge"}}
+[2024-12-03 22:42:45] [DEBUG] GITHUB REQUEST ID: F502:3055D4:85FE869:881CF24:674F8965
+[2024-12-03 22:42:45] [DEBUG] RESPONSE (OK): {"data":{"organization":null},"errors":[{"type":"NOT_FOUND","path":["organization"],"locations":[{"line":1,"column":25}],"message":"Could not resolve to an Organization with the login of 'mgmri-dge'."}]}
+[2024-12-03 22:42:45] [DEBUG] OctoshiftCLI.OctoshiftCliException: Could not resolve to an Organization with the login of 'mgmri-dge'.
+   at OctoshiftCLI.Services.GithubClient.EnsureSuccessGraphQLResponse(JObject response)
+   at OctoshiftCLI.Services.GithubClient.PostGraphQLAsync(String url, Object body, Dictionary`2 customHeaders)
+   at OctoshiftCLI.Services.GithubApi.<>c__DisplayClass19_0.<<GetOrganizationId>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates`1 shouldRetryResultPredicates, Func`5 onRetryAsync, Int32 permittedRetryCount, IEnumerable`1 sleepDurationsEnumerable, Func`4 sleepDurationProvider, Boolean continueOnCapturedContext)
+[2024-12-03 22:42:45] [DEBUG] Retrying...
+[2024-12-03 22:42:49] [DEBUG] HTTP POST: https://api.github.com/graphql
+[2024-12-03 22:42:49] [DEBUG] HTTP BODY: {"query":"query($login: String!) {organization(login: $login) { login, id, name } }","variables":{"login":"mgmri-dge"}}
+[2024-12-03 22:42:49] [DEBUG] GITHUB REQUEST ID: F502:3055D4:85FFAB8:881E1E8:674F8965
+[2024-12-03 22:42:49] [DEBUG] RESPONSE (OK): {"data":{"organization":null},"errors":[{"type":"NOT_FOUND","path":["organization"],"locations":[{"line":1,"column":25}],"message":"Could not resolve to an Organization with the login of 'mgmri-dge'."}]}
+[2024-12-03 22:42:49] [DEBUG] OctoshiftCLI.OctoshiftCliException: Could not resolve to an Organization with the login of 'mgmri-dge'.
+   at OctoshiftCLI.Services.GithubClient.EnsureSuccessGraphQLResponse(JObject response)
+   at OctoshiftCLI.Services.GithubClient.PostGraphQLAsync(String url, Object body, Dictionary`2 customHeaders)
+   at OctoshiftCLI.Services.GithubApi.<>c__DisplayClass19_0.<<GetOrganizationId>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates`1 shouldRetryResultPredicates, Func`5 onRetryAsync, Int32 permittedRetryCount, IEnumerable`1 sleepDurationsEnumerable, Func`4 sleepDurationProvider, Boolean continueOnCapturedContext)
+[2024-12-03 22:42:49] [DEBUG] Retrying...
+[2024-12-03 22:42:57] [DEBUG] HTTP POST: https://api.github.com/graphql
+[2024-12-03 22:42:57] [DEBUG] HTTP BODY: {"query":"query($login: String!) {organization(login: $login) { login, id, name } }","variables":{"login":"mgmri-dge"}}
+[2024-12-03 22:42:57] [DEBUG] GITHUB REQUEST ID: F502:3055D4:8601DB8:882055D:674F8969
+[2024-12-03 22:42:57] [DEBUG] RESPONSE (OK): {"data":{"organization":null},"errors":[{"type":"NOT_FOUND","path":["organization"],"locations":[{"line":1,"column":25}],"message":"Could not resolve to an Organization with the login of 'mgmri-dge'."}]}
+[2024-12-03 22:42:57] [DEBUG] OctoshiftCLI.OctoshiftCliException: Could not resolve to an Organization with the login of 'mgmri-dge'.
+   at OctoshiftCLI.Services.GithubClient.EnsureSuccessGraphQLResponse(JObject response)
+   at OctoshiftCLI.Services.GithubClient.PostGraphQLAsync(String url, Object body, Dictionary`2 customHeaders)
+   at OctoshiftCLI.Services.GithubApi.<>c__DisplayClass19_0.<<GetOrganizationId>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates`1 shouldRetryResultPredicates, Func`5 onRetryAsync, Int32 permittedRetryCount, IEnumerable`1 sleepDurationsEnumerable, Func`4 sleepDurationProvider, Boolean continueOnCapturedContext)
+[2024-12-03 22:42:57] [DEBUG] Retrying...
+[2024-12-03 22:43:09] [DEBUG] HTTP POST: https://api.github.com/graphql
+[2024-12-03 22:43:09] [DEBUG] HTTP BODY: {"query":"query($login: String!) {organization(login: $login) { login, id, name } }","variables":{"login":"mgmri-dge"}}
+[2024-12-03 22:43:09] [DEBUG] GITHUB REQUEST ID: F502:3055D4:860558C:8823E11:674F8971
+[2024-12-03 22:43:09] [DEBUG] RESPONSE (OK): {"data":{"organization":null},"errors":[{"type":"NOT_FOUND","path":["organization"],"locations":[{"line":1,"column":25}],"message":"Could not resolve to an Organization with the login of 'mgmri-dge'."}]}
+[2024-12-03 22:43:09] [DEBUG] OctoshiftCLI.OctoshiftCliException: Could not resolve to an Organization with the login of 'mgmri-dge'.
+   at OctoshiftCLI.Services.GithubClient.EnsureSuccessGraphQLResponse(JObject response)
+   at OctoshiftCLI.Services.GithubClient.PostGraphQLAsync(String url, Object body, Dictionary`2 customHeaders)
+   at OctoshiftCLI.Services.GithubApi.<>c__DisplayClass19_0.<<GetOrganizationId>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates`1 shouldRetryResultPredicates, Func`5 onRetryAsync, Int32 permittedRetryCount, IEnumerable`1 sleepDurationsEnumerable, Func`4 sleepDurationProvider, Boolean continueOnCapturedContext)
+[2024-12-03 22:43:09] [DEBUG] Retrying...
+[2024-12-03 22:43:25] [DEBUG] HTTP POST: https://api.github.com/graphql
+[2024-12-03 22:43:25] [DEBUG] HTTP BODY: {"query":"query($login: String!) {organization(login: $login) { login, id, name } }","variables":{"login":"mgmri-dge"}}
+[2024-12-03 22:43:26] [DEBUG] GITHUB REQUEST ID: F502:3055D4:860A423:8828DB7:674F897D
+[2024-12-03 22:43:26] [DEBUG] RESPONSE (OK): {"data":{"organization":null},"errors":[{"type":"NOT_FOUND","path":["organization"],"locations":[{"line":1,"column":25}],"message":"Could not resolve to an Organization with the login of 'mgmri-dge'."}]}
+[2024-12-03 22:43:26] [DEBUG] OctoshiftCLI.OctoshiftCliException: Could not resolve to an Organization with the login of 'mgmri-dge'.
+   at OctoshiftCLI.Services.GithubClient.EnsureSuccessGraphQLResponse(JObject response)
+   at OctoshiftCLI.Services.GithubClient.PostGraphQLAsync(String url, Object body, Dictionary`2 customHeaders)
+   at OctoshiftCLI.Services.GithubApi.<>c__DisplayClass19_0.<<GetOrganizationId>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates`1 shouldRetryResultPredicates, Func`5 onRetryAsync, Int32 permittedRetryCount, IEnumerable`1 sleepDurationsEnumerable, Func`4 sleepDurationProvider, Boolean continueOnCapturedContext)
+[2024-12-03 22:43:26] [DEBUG] Retrying...
+[2024-12-03 22:43:46] [DEBUG] HTTP POST: https://api.github.com/graphql
+[2024-12-03 22:43:46] [DEBUG] HTTP BODY: {"query":"query($login: String!) {organization(login: $login) { login, id, name } }","variables":{"login":"mgmri-dge"}}
+[2024-12-03 22:43:46] [DEBUG] GITHUB REQUEST ID: F502:3055D4:860FCA7:882E7A8:674F898E
+[2024-12-03 22:43:46] [DEBUG] RESPONSE (OK): {"data":{"organization":null},"errors":[{"type":"NOT_FOUND","path":["organization"],"locations":[{"line":1,"column":25}],"message":"Could not resolve to an Organization with the login of 'mgmri-dge'."}]}
+[2024-12-03 22:43:46] [ERROR] OctoshiftCLI.OctoshiftCliException: Failed to lookup the Organization ID for organization 'mgmri-dge'
+ ---> OctoshiftCLI.OctoshiftCliException: Could not resolve to an Organization with the login of 'mgmri-dge'.
+   at OctoshiftCLI.Services.GithubClient.EnsureSuccessGraphQLResponse(JObject response)
+   at OctoshiftCLI.Services.GithubClient.PostGraphQLAsync(String url, Object body, Dictionary`2 customHeaders)
+   at OctoshiftCLI.Services.GithubApi.<>c__DisplayClass19_0.<<GetOrganizationId>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates`1 shouldRetryResultPredicates, Func`5 onRetryAsync, Int32 permittedRetryCount, IEnumerable`1 sleepDurationsEnumerable, Func`4 sleepDurationProvider, Boolean continueOnCapturedContext)
+   at Polly.AsyncPolicy.ExecuteAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)
+   at OctoshiftCLI.RetryPolicy.Retry[T](Func`1 func)
+   at OctoshiftCLI.Services.GithubApi.GetOrganizationId(String org)
+   --- End of inner exception stack trace ---
+   at OctoshiftCLI.Services.GithubApi.GetOrganizationId(String org)
+   at OctoshiftCLI.Services.ReclaimService.ReclaimMannequins(String[] lines, String githubTargetOrg, Boolean force, Boolean skipInvitation)
+   at OctoshiftCLI.Commands.ReclaimMannequin.ReclaimMannequinCommandHandler.Handle(ReclaimMannequinCommandArgs args)
+   at OctoshiftCLI.Extensions.CommandExtensions.RunHandler[TArgs,THandler](TArgs args, ServiceProvider sp, CommandBase`2 command)
+   at OctoshiftCLI.Extensions.CommandExtensions.<>c__DisplayClass1_0`3.<<ConfigureCommand>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Invocation.AnonymousCommandHandler.InvokeAsync(InvocationContext )
+   at System.CommandLine.Invocation.InvocationPipeline.<>c__DisplayClass4_0.<<BuildInvocationChain>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c__DisplayClass17_0.<<UseParseErrorReporting>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c__DisplayClass12_0.<<UseHelp>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c__DisplayClass22_0.<<UseVersionOption>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c__DisplayClass19_0.<<UseTypoCorrections>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c.<<UseSuggestDirective>b__18_0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c__DisplayClass16_0.<<UseParseDirective>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c.<<RegisterWithDotnetSuggest>b__5_0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at System.CommandLine.Builder.CommandLineBuilderExtensions.<>c__DisplayClass8_0.<<UseExceptionHandler>b__0>d.MoveNext()
