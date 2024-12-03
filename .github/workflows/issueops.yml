@@ -102,7 +102,7 @@ jobs:
       contents: write
       issues: write
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -162,6 +162,7 @@ jobs:
           ORG_NAME: ${{ env.ORG_NAME }}
         run: |
           echo "Running migration script with the following variables:"
+          echo "GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN != '' }}"
           echo "EMU_USERS_FILE: $EMU_USERS_FILE"
           echo "USER_MAPPINGS_FILE: $USER_MAPPINGS_FILE"
           echo "ORG_NAME: $ORG_NAME"
