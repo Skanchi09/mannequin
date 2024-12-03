@@ -4,6 +4,7 @@ import csv
 import sys
 import subprocess
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Access the environment variables
@@ -63,13 +64,13 @@ def process_user_mappings(user_mappings_file, emu_users_df, org_suffix):
     update_csv_file(user_mappings_file, mappings)
 
 def verify_organization(org_name, gh_pat):
-    command = f"gh api orgs/{org_name} --header 'Authorization: token {gh_pat}'"
+    command = ['gh', 'api', f'orgs/{org_name}', '--header', f'Authorization: token {gh_pat}']
     try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
         print(f"Organization {org_name} verified successfully")
     except subprocess.CalledProcessError as e:
         print(f"Error verifying organization: {e}")
-        print(f"Command: {e.cmd}")
+        print(f"Command: {e.args}")
         print(f"Return code: {e.returncode}")
         print(f"Output: {e.output}")
         print(f"Error output: {e.stderr}")
@@ -94,7 +95,11 @@ def main():
     print(f"EMU_USERS_FILE: {EMU_USERS_FILE}")
     print(f"USER_MAPPINGS_FILE: {USER_MAPPINGS_FILE}")
 
-    if not all([GITHUB_TOKEN, EMU_USERS_FILE, USER_MAPPINGS_FILE, ORG_NAME]):
+    if not GITHUB_TOKEN:
+        print("GitHub token is not set. Please set the GITHUB_TOKEN environment variable.")
+        sys.exit(1)
+
+    if not all([EMU_USERS_FILE, USER_MAPPINGS_FILE, ORG_NAME]):
         print("Missing required environment variables. Ensure they are set correctly.")
         sys.exit(1)
 
