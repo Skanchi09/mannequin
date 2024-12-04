@@ -3,18 +3,17 @@ import os
 import csv
 import sys
 import subprocess
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Access the environment variables
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")
 ORG_NAME = os.getenv("ORG_NAME")
 github_pat = os.getenv("GITHUB_TOKEN")
 
-# Extract base organization name (e.g., 'mgmri' from 'mgmri-dge')
 ORG_SUFFIX = ORG_NAME.split('-')[0] if ORG_NAME else ''
 
 def read_excel_file(file_name):
@@ -69,11 +68,14 @@ def verify_organization(org_name, gh_pat):
         result = subprocess.run(command, check=True, capture_output=True, text=True)
         print(f"Organization {org_name} verified successfully")
     except subprocess.CalledProcessError as e:
-        print(f"Error verifying organization: {e}")
-        print(f"Command: {e.args}")
+        print(f"Error verifying organization: Command returned non-zero exit status {e.returncode}")
+        masked_command = [re.sub(r'(Authorization: token ).*', r'\1[REDACTED]', arg) if 'Authorization:' in arg else arg for arg in e.cmd]
+        print(f"Command: {' '.join(masked_command)}")
         print(f"Return code: {e.returncode}")
-        print(f"Output: {e.output}")
-        print(f"Error output: {e.stderr}")
+        masked_output = re.sub(r'(Authorization: token ).*', r'\1[REDACTED]', e.output)
+        print(f"Output: {masked_output}")
+        masked_stderr = re.sub(r'(Authorization: token ).*', r'\1[REDACTED]', e.stderr)
+        print(f"Error output: {masked_stderr}")
 
 def run_reclaim_command(org_name, csv_file, gh_pat):
     command = f"gh gei reclaim-mannequin --github-target-org {org_name} --csv {csv_file} --github-target-pat {gh_pat}"
@@ -82,11 +84,14 @@ def run_reclaim_command(org_name, csv_file, gh_pat):
         print("Reclaim command executed successfully:")
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print(f"Error executing reclaim command: {e}")
-        print(f"Command: {e.cmd}")
+        print(f"Error executing reclaim command: Command returned non-zero exit status {e.returncode}")
+        masked_command = re.sub(r'(--github-target-pat ).*', r'\1[REDACTED]', e.cmd)
+        print(f"Command: {masked_command}")
         print(f"Return code: {e.returncode}")
-        print(f"Output: {e.output}")
-        print(f"Error output: {e.stderr}")
+        masked_output = re.sub(r'(--github-target-pat ).*', r'\1[REDACTED]', e.output)
+        print(f"Output: {masked_output}")
+        masked_stderr = re.sub(r'(--github-target-pat ).*', r'\1[REDACTED]', e.stderr)
+        print(f"Error output: {masked_stderr}")
 
 def main():
     print("Executing migration script...")
@@ -111,10 +116,8 @@ def main():
         
         process_user_mappings(USER_MAPPINGS_FILE, emu_users_df, ORG_SUFFIX)
         
-        # Verify organization before running reclaim command
         verify_organization(ORG_NAME, github_pat)
         
-        # Run the reclaim command after updating the CSV
         run_reclaim_command(ORG_NAME, USER_MAPPINGS_FILE, github_pat)
     except Exception as e:
         print(f"An error occurred: {str(e)}")
