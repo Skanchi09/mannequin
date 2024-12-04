@@ -1,0 +1,6 @@
+[2024-12-04 17:52:02] [INFO] You are running an up-to-date version of the gei CLI [v1.10.0]
+[2024-12-04 17:52:03] [INFO] GITHUB ORG: mgmri-dge
+[2024-12-04 17:52:03] [INFO] GITHUB PAT: ***
+[2024-12-04 17:52:03] [INFO] CSV: user-mappings-template.csv
+[2024-12-04 17:52:03] [INFO] Reclaiming Mannequins with CSV...
+[2024-12-04 17:53:04] [ERROR] Failed to lookup the Organization ID for organization 'mgmri-dge'
