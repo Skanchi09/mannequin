@@ -1,0 +1,119 @@
+name: Extract Authors and Rewrite History
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  extract-authors:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Target Repository
+      - name: Checkout Target Repository
+        uses: actions/checkout@v4
+        with: 
+          repository: MGMResorts/mgm-af-migrations-via-actions
+          token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 0
+          path: target-repo 
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Step 3: Install Required Dependencies
+      - name: Install Dependencies
+        run: pip install git-filter-repo pandas openpyxl
+
+      # Step 4: Print Authors Before Rewrite
+      - name: Print Authors Before Rewrite
+        run: |
+          echo "Authors Before Rewrite:"
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
+
+      # Step 5: Extract Unique Authors to a File
+      - name: Fetch Unique Authors
+        run: |
+          # Extract authors and save to a file
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq > target-repo/authors.txt
+
+      # Step 6: Upload Excel File (Ensure the Excel file is added to the repository or uploaded as an artifact)
+      - name: Upload Excel File for Author Mapping
+        uses: actions/upload-artifact@v3
+        with:
+          name: authors_excel
+          path: authors.xlsx
+
+      # Step 7: Process Excel and Generate Mailmap File
+      - name: Process Excel and Generate Mailmap
+        run: |
+          python3 - <<EOF
+          import pandas as pd
+
+          # Load Excel file
+          excel_file = "authors.xlsx"  # Ensure the Excel file is in the workspace
+          df = pd.read_excel(excel_file)
+
+          # Read extracted authors from previous step
+          with open("target-repo/authors.txt", "r") as f:
+              extracted_authors = f.read().splitlines()
+
+          # Prepare mappings
+          mailmap = ""
+          for index, row in df.iterrows():
+              # Extract login, name, and email
+              login = str(row['login']).strip() if pd.notna(row['login']) else ""
+              name = str(row['name']).strip() if pd.notna(row['name']) else ""
+              email = str(row['saml_name_id']).strip() if pd.notna(row['saml_name_id']) else ""
+
+              # Generate the new name and email
+              if email:
+                  new_name = email.split('@')[0]  # Prefix before '@'
+                  new_email = email  # Use the email directly
+
+                  # Match authors from Git logs and replace them
+                  for author in extracted_authors:
+                      git_name, git_email = author.rsplit(" <", 1)
+                      git_email = git_email.rstrip(">")
+
+                      # Match either login or name
+                      if login and (login in git_name or login in git_email):
+                          mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
+                      elif name and (name in git_name or name in git_email):
+                          mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
+
+          # Write mailmap file
+          with open("target-repo/mailmap.txt", "w") as f:
+              f.write(mailmap)
+
+          print("Generated Mailmap File:")
+          print(mailmap)
+          EOF
+
+      # Step 8: Display Generated Mailmap
+      - name: Display Generated Mailmap
+        run: cat target-repo/mailmap.txt
+
+      # Step 9: Rewrite Git History Using Mailmap
+      - name: Rewrite Git History
+        run: |
+          cd target-repo
+          git-filter-repo --mailmap mailmap.txt --force
+
+      # Step 10: Print Authors After Rewrite
+      - name: Print Authors After Rewrite
+        run: |
+          echo "Authors After Rewrite:"
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
+
+      # Step 11: Force Push Rewritten History
+      - name: Force Push Rewritten History
+        run: |
+          cd target-repo
+          git push origin --force
