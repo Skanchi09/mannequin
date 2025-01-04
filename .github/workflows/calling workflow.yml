@@ -72,7 +72,7 @@ jobs:
           gh extension install github/gh-gei
 
       - name: Run migration script
-        run: python ./mapping.py
+        run: python ./.github/scripts/mapping.py
 
       - name: Post-execution status
         if: always()
