@@ -59,7 +59,7 @@ jobs:
       - name: Trigger Commit-history-mapping in Target
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.SOURCE_ADMIN_TOKEN }}
+          token: ${{ secrets.MY_PAT }}
           event-type: Commit-history-mapping
           client-payload: |
             {
