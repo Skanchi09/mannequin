@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Target Repository
         uses: actions/checkout@v4
         with: 
-          repository: Saideep09/branch-protection-rules
+          repository: MGMResorts/pd-payments-audit-trail
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
           path: target-repo 
@@ -93,11 +93,11 @@ jobs:
       - name: Display Generated Mailmap
         run: cat target-repo/mailmap.txt
 
-      # Step 8: Rewrite Git History Using Mailmap
-      - name: Rewrite Git History
-        run: |
-          cd target-repo
-          git-filter-repo --mailmap mailmap.txt --force
+      # # Step 8: Rewrite Git History Using Mailmap
+      # - name: Rewrite Git History
+      #   run: |
+      #     cd target-repo
+      #     git-filter-repo --mailmap mailmap.txt --force
 
       # Step 9: Print Authors After Rewrite
       - name: Print Authors After Rewrite
