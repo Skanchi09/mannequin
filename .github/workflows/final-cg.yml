@@ -12,14 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Target Repository
-      - name: Checkout Target Repository
+      # Step 1: Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        with: 
-          repository: MGMResorts/pd-payments-audit-trail
+        with:
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
-          path: target-repo 
 
       # Step 2: Set up Python
       - name: Set up Python
@@ -41,7 +39,7 @@ jobs:
       - name: Fetch Unique Authors
         run: |
           # Extract authors and save to a file
-          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq > target-repo/authors.txt
+          git log --all --pretty="%an <%ae>" | sort | uniq > authors.txt
 
       # Step 6: Process Excel and Generate Mailmap File
       - name: Process Excel and Generate Mailmap
@@ -49,12 +47,12 @@ jobs:
           python3 - <<EOF
           import pandas as pd
 
-          # Load Excel file from repository root
-          excel_file = "authors.xlsx"
+          # Load Excel file
+          excel_file = "authors.xlsx"  # Excel file in the repository root
           df = pd.read_excel(excel_file)
 
           # Read extracted authors from previous step
-          with open("target-repo/authors.txt", "r") as f:
+          with open("authors.txt", "r") as f:
               extracted_authors = f.read().splitlines()
 
           # Prepare mappings
@@ -82,7 +80,7 @@ jobs:
                           mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
 
           # Write mailmap file
-          with open("target-repo/mailmap.txt", "w") as f:
+          with open("mailmap.txt", "w") as f:
               f.write(mailmap)
 
           print("Generated Mailmap File:")
@@ -91,22 +89,20 @@ jobs:
 
       # Step 7: Display Generated Mailmap
       - name: Display Generated Mailmap
-        run: cat target-repo/mailmap.txt
+        run: cat mailmap.txt
 
       # # Step 8: Rewrite Git History Using Mailmap
       # - name: Rewrite Git History
       #   run: |
-      #     cd target-repo
       #     git-filter-repo --mailmap mailmap.txt --force
 
       # Step 9: Print Authors After Rewrite
       - name: Print Authors After Rewrite
         run: |
           echo "Authors After Rewrite:"
-          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
+          git log --all --pretty="%an <%ae>" | sort | uniq
 
       # Step 10: Force Push Rewritten History
       - name: Force Push Rewritten History
         run: |
-          cd target-repo
           git push origin --force
