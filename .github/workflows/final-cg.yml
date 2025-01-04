@@ -120,4 +120,4 @@ jobs:
           cd target-repo
           git add .
           git commit -m "pushing the commit history changes"
-          git push origin --force
+          git push
