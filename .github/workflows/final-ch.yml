@@ -1,7 +1,8 @@
 name: Extract Authors and Rewrite History
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
+    types: [Commit-history-mapping]
 
 permissions:
   contents: write
@@ -12,12 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Read Input Variables
+        run: |
+          echo "Repository Name: ${{ github.event.client_payload.repo_name }}"
+          echo "Repository Org: ${{ github.event.client_payload.repo_org }}"
+          echo "Target Org: ${{ github.event.client_payload.target_org }}"
+        env:
+          REPO_NAME: ${{ github.event.client_payload.repo_name }}
+          REPO_ORG: ${{ github.event.client_payload.repo_org }}
+          TARGET_ORG: ${{ github.event.client_payload.target_org }}
+      
       # Step 1: Checkout Target Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
-          repository: MGMResorts/pd-payments-audit-trail
+          repository: ${{ github.event.client_payload.target_org }}/${{ github.event.client_payload.repo_name }}
           fetch-depth: 0 
           path: target-repo 
 
