@@ -24,8 +24,8 @@ jobs:
       - name: Download authors.xlsx
         run: |
           curl -H "Authorization: token ${{ secrets.SOURCE_ADMIN_TOKEN }}" \
-         -o authors.xlsx \
-         https://raw.githubusercontent.com/MGMResorts/mgm-af-migrations-via-actions/main/authors.xlsx
+           -o authors.xlsx \
+           https://raw.githubusercontent.com/MGMResorts/mgm-af-migrations-via-actions/main/authors.xlsx
 
       # Step 3: Set up Python
       - name: Set up Python
