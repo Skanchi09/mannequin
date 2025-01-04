@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Target Repository
         uses: actions/checkout@v4
         with: 
-          repository: Skanchi09/mannequin
+          repository: Saideep09/branch-protection-rules
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
           path: target-repo 
