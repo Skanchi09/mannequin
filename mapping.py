@@ -8,11 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GITHUB_TOKEN = os.getenv("GH_TOKEN")
+GH_PAT = os.getenv("GH_PAT")
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")
 ORG_NAME = os.getenv("ORG_NAME")
-github_pat = os.getenv("GH_TOKEN")
+github_pat = os.getenv("GH_PAT")
 
 ORG_SUFFIX = ORG_NAME.split('-')[0] if ORG_NAME else ''
 
@@ -95,13 +95,13 @@ def run_reclaim_command(org_name, csv_file, gh_pat):
 
 def main():
     print("Executing migration script...")
-    print(f"GITHUB_TOKEN: {'Set' if GITHUB_TOKEN else 'Not Set'}")
+    print(f"GH_PAT: {'Set' if GH_PAT else 'Not Set'}")
     print(f"ORG_NAME: {ORG_NAME}")
     print(f"EMU_USERS_FILE: {EMU_USERS_FILE}")
     print(f"USER_MAPPINGS_FILE: {USER_MAPPINGS_FILE}")
 
-    if not GITHUB_TOKEN:
-        print("GitHub token is not set. Please set the GITHUB_TOKEN environment variable.")
+    if not GH_PAT:
+        print("GitHub token is not set. Please set the GH_PAT environment variable.")
         sys.exit(1)
 
     if not all([EMU_USERS_FILE, USER_MAPPINGS_FILE, ORG_NAME]):
