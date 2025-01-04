@@ -112,4 +112,6 @@ jobs:
       - name: Force Push Rewritten History
         run: |
           cd target-repo
-          git push origin --force
+          git add .
+          git commit -m "pushing the commit history changes"
+          git push
