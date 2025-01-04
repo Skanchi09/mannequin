@@ -127,10 +127,16 @@ jobs:
           cd target-repo
           git branch --set-upstream-to=origin/main main
 
-      # Step 10: Commit and Push Changes
-      - name: Commit History Changes
+      # Step 12: Force Push Changes
+      - name: Force Push Changes
         run: |
           cd target-repo
-          git add .
-          git commit -m "pushing the commit history changes"
-          git push
+          git push origin main --force
+
+      # # Step 10: Commit and Push Changes
+      # - name: Commit History Changes
+      #   run: |
+      #     cd target-repo
+      #     git add .
+      #     git commit -m "pushing the commit history changes"
+      #     git push
