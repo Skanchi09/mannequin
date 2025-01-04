@@ -36,7 +36,7 @@ jobs:
         run: echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
 
       - name: Run migration script
-        run: python ./migration_script.py
+        run: python ./mapping.py
 
       - name: Post-execution status
         if: always()
