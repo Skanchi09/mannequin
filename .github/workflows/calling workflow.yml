@@ -12,11 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Generate User Mappings File
+        run: |
+          mkdir -p ./template
+          echo "mannequin-user,mannequin-id,target-user" > ./template/user-mappings-template.csv
+          echo "vaidy-ea,M_kgDOCvo_Fw," >> ./template/user-mappings-template.csv
+          echo "JayashreeMGM,M_kgDOCvoBaw," >> ./template/user-mappings-template.csv
+
       - name: Upload User Mappings Artifact
         uses: actions/upload-artifact@v3
         with:
           name: user-mappings-template
-          path: ./template/user-mapping-template-csv
+          path: ./template/user-mappings-template.csv
 
   trigger-user-mapping-workflow:
     name: Trigger User Mapping Migration
