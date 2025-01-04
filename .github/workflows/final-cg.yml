@@ -12,47 +12,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Repository
-      - name: Checkout Repository
+      # Step 1: Checkout Target Repository
+      - name: Checkout Target Repository
         uses: actions/checkout@v4
-        with:
+        with: 
+          repository: MGMResorts/pd-payments-audit-trail
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
+          path: target-repo 
 
-      # Step 2: Set up Python
+      # Step 2: Download authors.xlsx
+      - name: Download authors.xlsx
+        run: |
+          curl -o authors.xlsx https://raw.githubusercontent.com/Skanchi09/mannequin/main/authors.xlsx
+
+      # Step 3: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # Step 3: Install Dependencies
+      # Step 4: Install Dependencies
       - name: Install Required Dependencies
         run: pip install git-filter-repo pandas openpyxl
 
-      # Step 4: Print Authors Before Rewrite
+      # Step 5: Print Authors Before Rewrite
       - name: Print Authors Before Rewrite
         run: |
           echo "Authors Before Rewrite:"
           git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
 
-      # Step 5: Extract Unique Authors to a File
+      # Step 6: Extract Unique Authors to a File
       - name: Fetch Unique Authors
         run: |
-          # Extract authors and save to a file
-          git log --all --pretty="%an <%ae>" | sort | uniq > authors.txt
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq > target-repo/authors.txt
 
-      # Step 6: Process Excel and Generate Mailmap File
+      # Step 7: Process Excel and Generate Mailmap File
       - name: Process Excel and Generate Mailmap
         run: |
           python3 - <<EOF
           import pandas as pd
 
           # Load Excel file
-          excel_file = "authors.xlsx"  # Excel file in the repository root
+          excel_file = "authors.xlsx"
           df = pd.read_excel(excel_file)
 
           # Read extracted authors from previous step
-          with open("authors.txt", "r") as f:
+          with open("target-repo/authors.txt", "r") as f:
               extracted_authors = f.read().splitlines()
 
           # Prepare mappings
@@ -80,29 +86,31 @@ jobs:
                           mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
 
           # Write mailmap file
-          with open("mailmap.txt", "w") as f:
+          with open("target-repo/mailmap.txt", "w") as f:
               f.write(mailmap)
 
           print("Generated Mailmap File:")
           print(mailmap)
           EOF
 
-      # Step 7: Display Generated Mailmap
+      # Step 8: Display Generated Mailmap
       - name: Display Generated Mailmap
-        run: cat mailmap.txt
+        run: cat target-repo/mailmap.txt
 
-      # # Step 8: Rewrite Git History Using Mailmap
+      # # Step 9: Rewrite Git History Using Mailmap
       # - name: Rewrite Git History
       #   run: |
+      #     cd target-repo
       #     git-filter-repo --mailmap mailmap.txt --force
 
-      # Step 9: Print Authors After Rewrite
+      # Step 10: Print Authors After Rewrite
       - name: Print Authors After Rewrite
         run: |
           echo "Authors After Rewrite:"
-          git log --all --pretty="%an <%ae>" | sort | uniq
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
 
-      # Step 10: Force Push Rewritten History
+      # Step 11: Force Push Rewritten History
       - name: Force Push Rewritten History
         run: |
+          cd target-repo
           git push origin --force
