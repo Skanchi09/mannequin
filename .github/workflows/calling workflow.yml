@@ -16,7 +16,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: user-mappings-template
-          path: user-mappings-template.csv
+          path: ./template/user-mapping-template-csv
 
   trigger-user-mapping-workflow:
     name: Trigger User Mapping Migration
