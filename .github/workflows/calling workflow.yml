@@ -39,6 +39,6 @@ jobs:
       - name: Trigger Workflow 2
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.MY_PAT }}
           event-type: user-mapping-migration
           client-payload: '{"USER_MAPPINGS_FILE": "./user-mappings-template.csv"}'
