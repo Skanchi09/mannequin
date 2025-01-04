@@ -27,18 +27,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Download user mapping artifact
+      - name: Download user mapping file artifact
         uses: actions/download-artifact@v3
         with:
           name: user-mappings-template
-          path: ./
+          path: ./artifacts
 
       - name: List downloaded files
-        run: ls -R
+        run: ls -R ./artifacts
 
       - name: Trigger Workflow 2
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.MY_PAT }}
           event-type: user-mapping-migration
-          client-payload: '{"USER_MAPPINGS_FILE": "./user-mappings-template.csv"}'
+          client-payload: '{"USER_MAPPINGS_FILE": "./artifacts/user-mappings-template.csv"}'
