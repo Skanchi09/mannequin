@@ -9,7 +9,7 @@ jobs:
 
     env:
       GH_PAT: ${{ secrets.GH_PAT }}
-      EMU_USERS_FILE: ./'MGM Resorts GitHub Enterprise Users - 11-06-24.xlsx'
+      EMU_USERS_FILE: ./authors.xlsx
       USER_MAPPINGS_FILE: ./user-mappings-template.csv
       ORG_NAME: ${{ secrets.ORG_NAME }}
 
