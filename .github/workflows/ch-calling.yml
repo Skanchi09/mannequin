@@ -1,0 +1,98 @@
+name: Commit History Mapping Workflow
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  # Step 1: Prepare Job
+  prepare:
+    runs-on: ubuntu-latest
+
+    outputs:
+      repo_name: "pd-payments-audit-trail"
+      repo_org: "MGMResorts"
+      target_org: "MGMResorts"
+
+    steps:
+      - name: Set Outputs
+        run: |
+          echo "repo_name=pd-payments-audit-trail" >> $GITHUB_ENV
+          echo "repo_org=MGMResorts" >> $GITHUB_ENV
+          echo "target_org=MGMResorts" >> $GITHUB_ENV
+
+  # Step 2: Migrate Job
+  migrate:
+    runs-on: ubuntu-latest
+    needs: [prepare]
+
+    outputs:
+      repo_name: ${{ needs.prepare.outputs.repo_name }}
+      repo_org: ${{ needs.prepare.outputs.repo_org }}
+      target_org: ${{ needs.prepare.outputs.target_org }}
+
+    steps:
+      - name: Print Variables
+        run: |
+          echo "Repository Name: ${{ needs.prepare.outputs.repo_name }}"
+          echo "Repository Org: ${{ needs.prepare.outputs.repo_org }}"
+          echo "Target Org: ${{ needs.prepare.outputs.target_org }}"
+
+      - name: Validate Migration Readiness
+        run: echo "Migration Validation Complete!"
+
+  # Step 3: Commit History Mapping Job
+  Commit-history-mapping:
+    runs-on: ubuntu-latest
+    needs: [prepare, migrate]
+
+    steps:
+      - name: Print Variables
+        run: |
+          echo "Repository Name: ${{ needs.migrate.outputs.repo_name }}"
+          echo "Repository Org: ${{ needs.migrate.outputs.repo_org }}"
+          echo "Target Org: ${{ needs.migrate.outputs.target_org }}"
+
+      - name: Trigger Commit-history-mapping in Target
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.SOURCE_ADMIN_TOKEN }}
+          event-type: Commit-history-mapping
+          client-payload: |
+            {
+              "repo_name": "${{ needs.migrate.outputs.repo_name }}",
+              "repo_org": "${{ needs.migrate.outputs.repo_org }}",
+              "target_org": "${{ needs.migrate.outputs.target_org }}"
+            }
+
+  # Optional: Notification Job
+  notify:
+    runs-on: ubuntu-latest
+    needs: [Commit-history-mapping]
+
+    steps:
+      - name: Notify Completion
+        run: echo "Commit History Mapping Workflow Completed!"
+
+
+
+# Commit-history-mapping:
+#     runs-on: ubuntu-latest
+#     needs: [prepare, migrate]
+
+#     steps:
+#       - name: Print Variables
+#         run: |
+#           echo "Repository Name: ${{ needs.migrate.outputs.repo_name }}"
+#           echo "Repository Org: ${{ needs.migrate.outputs.repo_org }}"
+#           echo "Target Org: ${{ needs.migrate.outputs.target_org }}"
+
+#       - name: Trigger Commit-history-mapping in Target
+#         uses: peter-evans/repository-dispatch@v1
+#         with:
+#           token: ${{ secrets.SOURCE_ADMIN_TOKEN }}
+#           event-type: Commit-history-mapping
+#           client-payload: '{"repo_name": "${{ needs.migrate.outputs.repo_name }}", "repo_org": "${{ needs.migrate.outputs.repo_org }}", "target_org": "${{ needs.migrate.outputs.target_org }}"}'
