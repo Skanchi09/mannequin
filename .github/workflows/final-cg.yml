@@ -18,6 +18,7 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0 
+          path: target-repo 
 
       # Step 2: Download authors.xlsx
       - name: Download authors.xlsx
