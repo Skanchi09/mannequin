@@ -8,11 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_TOKEN = os.getenv("GH_TOKEN")
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")
 ORG_NAME = os.getenv("ORG_NAME")
-github_pat = os.getenv("GITHUB_TOKEN")
+github_pat = os.getenv("GH_TOKEN")
 
 ORG_SUFFIX = ORG_NAME.split('-')[0] if ORG_NAME else ''
 
