@@ -17,8 +17,9 @@ jobs:
     env:
       GH_PAT: ${{ secrets.GH_PAT }}
       EMU_USERS_FILE: ./authors.xlsx
-      USER_MAPPINGS_FILE: ./user-mappings-template.csv
+      USER_MAPPINGS_FILE: ${{ inputs.USER_MAPPINGS_FILE || './user-mappings-template.csv' }}
       ORG_NAME: ${{ secrets.ORG_NAME }}
+
 
     steps:
       - name: Checkout code
