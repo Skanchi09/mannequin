@@ -6,7 +6,7 @@ on:
       USER_MAPPINGS_FILE:
         description: 'User Mappings File'
         required: true
-        default: './user-mappings-template.csv'
+        default: './artifacts/user-mappings-template.csv'
   repository_dispatch:
     types: [user-mapping-migration]
 
@@ -17,13 +17,21 @@ jobs:
     env:
       GH_PAT: ${{ secrets.GH_PAT }}
       EMU_USERS_FILE: ./authors.xlsx
-      USER_MAPPINGS_FILE: ./artifacts/user-mappings-template.csv
+      USER_MAPPINGS_FILE: ${{ inputs.USER_MAPPINGS_FILE || './artifacts/user-mappings-template.csv' }}
       ORG_NAME: ${{ secrets.ORG_NAME }}
-
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download user mapping file artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: user-mappings-template
+          path: ./artifacts
+
+      - name: Debug File System
+        run: ls -R ./artifacts
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -46,10 +54,67 @@ jobs:
       - name: Install GitHub Enterprise Importer Extension
         run: |
           gh extension install github/gh-gei
-          
+
       - name: Run migration script
         run: python ./mapping.py
 
       - name: Post-execution status
         if: always()
         run: echo "Workflow execution completed."
+
+
+# name: User Mapping Migration Workflow
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       USER_MAPPINGS_FILE:
+#         description: 'User Mappings File'
+#         required: true
+#         default: './user-mappings-template.csv'
+#   repository_dispatch:
+#     types: [user-mapping-migration]
+
+# jobs:
+#   run-migration-script:
+#     runs-on: ubuntu-latest
+
+#     env:
+#       GH_PAT: ${{ secrets.GH_PAT }}
+#       EMU_USERS_FILE: ./authors.xlsx
+#       USER_MAPPINGS_FILE: ./artifacts/user-mappings-template.csv
+#       ORG_NAME: ${{ secrets.ORG_NAME }}
+
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.x'
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install pandas python-dotenv openpyxl
+
+#       - name: Install GitHub CLI
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y gh
+
+#       - name: Authenticate GitHub CLI
+#         run: echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
+
+#       - name: Install GitHub Enterprise Importer Extension
+#         run: |
+#           gh extension install github/gh-gei
+          
+#       - name: Run migration script
+#         run: python ./mapping.py
+
+#       - name: Post-execution status
+#         if: always()
+#         run: echo "Workflow execution completed."
