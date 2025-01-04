@@ -23,7 +23,9 @@ jobs:
       # Step 2: Download authors.xlsx
       - name: Download authors.xlsx
         run: |
-          curl -H "Authorization: token ${{ secrets.GH_PAT }}" -o authors.xlsx https://raw.githubusercontent.com/MGMResorts/mgm-af-migrations-via-actions/main/authors.xlsx
+          curl -H "Authorization: token ${{ secrets.MY_PAT }}" \
+           -L -o authors.xlsx \
+            https://raw.githubusercontent.com/MGMResorts/mgm-af-migrations-via-actions/main/authors.xlsx
           ls -l authors.xlsx
           file authors.xlsx 
 
