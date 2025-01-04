@@ -2,6 +2,13 @@ name: User Mapping Migration Workflow
 
 on:
   workflow_dispatch:
+    inputs:
+      USER_MAPPINGS_FILE:
+        description: 'User Mappings File'
+        required: true
+        default: './user-mappings-template.csv'
+  repository_dispatch:
+    types: [user-mapping-migration]
 
 jobs:
   run-migration-script:
