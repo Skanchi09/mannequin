@@ -114,6 +114,13 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
+       # Step 10: Add Remote Origin
+      - name: Add Remote Origin
+        run: |
+          cd target-repo
+          git remote add origin https://github.com/Skanchi09/mannequin.git
+          git branch --set-upstream-to=origin/main main
+
       # Step 10: Commit and Push Changes
       - name: Commit History Changes
         run: |
