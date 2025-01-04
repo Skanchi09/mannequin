@@ -1,0 +1,35 @@
+name: User Mapping Migration Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-migration-script:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      EMU_USERS_FILE: ${{ secrets.EMU_USERS_FILE }}
+      USER_MAPPINGS_FILE: ${{ secrets.USER_MAPPINGS_FILE }}
+      ORG_NAME: ${{ secrets.ORG_NAME }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas python-dotenv openpyxl
+
+      - name: Run migration script
+        run: python ./migration_script.py
+
+      - name: Post-execution status
+        if: always()
+        run: echo "Workflow execution completed."
