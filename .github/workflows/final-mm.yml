@@ -9,8 +9,8 @@ jobs:
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      EMU_USERS_FILE: ${{ secrets.EMU_USERS_FILE }}
-      USER_MAPPINGS_FILE: ${{ secrets.USER_MAPPINGS_FILE }}
+      EMU_USERS_FILE: ./'MGM Resorts GitHub Enterprise Users - 11-06-24.xlsx'
+      USER_MAPPINGS_FILE: ./user-mappings-template.csv
       ORG_NAME: ${{ secrets.ORG_NAME }}
 
     steps:
@@ -26,6 +26,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pandas python-dotenv openpyxl
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Run migration script
         run: python ./migration_script.py
