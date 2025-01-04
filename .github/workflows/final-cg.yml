@@ -108,10 +108,16 @@ jobs:
           echo "Authors After Rewrite:"
           git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
 
-      # Step 11: Force Push Rewritten History
-      - name: Force Push Rewritten History
+      # Step 9: Configure Git Identity
+      - name: Configure Git Identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      # Step 10: Commit and Push Changes
+      - name: Commit History Changes
         run: |
           cd target-repo
           git add .
           git commit -m "pushing the commit history changes"
-          git push
+          git push origin --force
