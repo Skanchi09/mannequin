@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Target Repository
         uses: actions/checkout@v4
         with: 
-          repository: MGMResorts/mgm-af-migrations-via-actions
+          repository: Skanchi09/mannequin
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
           path: target-repo 
@@ -27,8 +27,8 @@ jobs:
         with:
           python-version: '3.x'
 
-      # Step 3: Install Required Dependencies
-      - name: Install Dependencies
+      # Step 3: Install Dependencies
+      - name: Install Required Dependencies
         run: pip install git-filter-repo pandas openpyxl
 
       # Step 4: Print Authors Before Rewrite
@@ -43,21 +43,14 @@ jobs:
           # Extract authors and save to a file
           git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq > target-repo/authors.txt
 
-      # Step 6: Upload Excel File (Ensure the Excel file is added to the repository or uploaded as an artifact)
-      - name: Upload Excel File for Author Mapping
-        uses: actions/upload-artifact@v3
-        with:
-          name: authors_excel
-          path: authors.xlsx
-
-      # Step 7: Process Excel and Generate Mailmap File
+      # Step 6: Process Excel and Generate Mailmap File
       - name: Process Excel and Generate Mailmap
         run: |
           python3 - <<EOF
           import pandas as pd
 
-          # Load Excel file
-          excel_file = "authors.xlsx"  # Ensure the Excel file is in the workspace
+          # Load Excel file from repository root
+          excel_file = "authors.xlsx"
           df = pd.read_excel(excel_file)
 
           # Read extracted authors from previous step
@@ -96,23 +89,23 @@ jobs:
           print(mailmap)
           EOF
 
-      # Step 8: Display Generated Mailmap
+      # Step 7: Display Generated Mailmap
       - name: Display Generated Mailmap
         run: cat target-repo/mailmap.txt
 
-      # Step 9: Rewrite Git History Using Mailmap
+      # Step 8: Rewrite Git History Using Mailmap
       - name: Rewrite Git History
         run: |
           cd target-repo
           git-filter-repo --mailmap mailmap.txt --force
 
-      # Step 10: Print Authors After Rewrite
+      # Step 9: Print Authors After Rewrite
       - name: Print Authors After Rewrite
         run: |
           echo "Authors After Rewrite:"
           git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
 
-      # Step 11: Force Push Rewritten History
+      # Step 10: Force Push Rewritten History
       - name: Force Push Rewritten History
         run: |
           cd target-repo
