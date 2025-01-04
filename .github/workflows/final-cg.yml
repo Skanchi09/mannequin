@@ -26,6 +26,8 @@ jobs:
           curl -H "Authorization: token ${{ secrets.SOURCE_ADMIN_TOKEN }}" \
            -o authors.xlsx \
            https://raw.githubusercontent.com/MGMResorts/mgm-af-migrations-via-actions/main/authors.xlsx
+          ls -l authors.xlsx
+          file authors.xlsx 
 
       # Step 3: Set up Python
       - name: Set up Python
