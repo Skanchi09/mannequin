@@ -71,7 +71,7 @@ jobs:
         run: |
           gh extension install github/gh-gei
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Run migration script
         run: python ./.github/scripts/mapping.py
