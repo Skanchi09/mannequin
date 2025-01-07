@@ -70,6 +70,8 @@ jobs:
       - name: Install GitHub Enterprise Importer Extension
         run: |
           gh extension install github/gh-gei
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Run migration script
         run: python ./.github/scripts/mapping.py
