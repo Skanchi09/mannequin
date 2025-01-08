@@ -32,6 +32,7 @@ jobs:
 
     env:
       GH_PAT: ${{ secrets.GH_PAT }}
+      GH_TOKEN: ${{ secrets.GH_PAT }}
       EMU_USERS_FILE: ./authors.xlsx
       USER_MAPPINGS_FILE: ./artifacts/user-mappings-template.csv
       ORG_NAME: ${{ secrets.ORG_NAME }}
@@ -70,8 +71,11 @@ jobs:
       - name: Install GitHub Enterprise Importer Extension
         run: |
           gh extension install github/gh-gei
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Debug Environment Variables
+        run: |
+          echo "GH_PAT is ${GH_PAT:+Set}"
+          echo "GH_TOKEN is ${GH_TOKEN:+Set}"
+          echo "ORG_NAME: $ORG_NAME"
 
       - name: Run migration script
         run: python ./.github/scripts/mapping.py
