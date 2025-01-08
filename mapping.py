@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GH_PAT = os.getenv("GH_PAT")
+GH_PAT = os.getenv("GH_PAT") or os.getenv("GH_TOKEN")
 EMU_USERS_FILE = os.getenv("EMU_USERS_FILE")
 USER_MAPPINGS_FILE = os.getenv("USER_MAPPINGS_FILE")
 ORG_NAME = os.getenv("ORG_NAME")
