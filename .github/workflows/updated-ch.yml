@@ -1,0 +1,149 @@
+name: Extract Authors and Rewrite Commit History for All Branches
+
+on:
+  repository_dispatch:
+    types: [Commit-history-mapping-updated]
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  extract-authors:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Read Input Variables
+      - name: Read Input Variables
+        run: |
+          echo "Repository Name: ${{ github.event.client_payload.repo_name }}"
+          echo "Repository Org: ${{ github.event.client_payload.repo_org }}"
+          echo "Target Org: ${{ github.event.client_payload.target_org }}"
+        env:
+          REPO_NAME: ${{ github.event.client_payload.repo_name }}
+          REPO_ORG: ${{ github.event.client_payload.repo_org }}
+          TARGET_ORG: ${{ github.event.client_payload.target_org }}
+      
+      # Step 2: Checkout Target Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MY_TOKEN }}
+          repository: SKanchi09/mannequin
+          fetch-depth: 0
+          path: target-repo
+
+      # Step 3: Fetch All Branches
+      - name: Fetch All Branches
+        run: |
+          cd target-repo
+          git fetch --all --prune
+
+      # Step 4: List All Branches
+      - name: List All Branches
+        id: list-branches
+        run: |
+          cd target-repo
+          git branch -r | grep -v '\->' | awk -F'/' '{print $2}' | sort | uniq > branches.txt
+          cat branches.txt
+        working-directory: target-repo
+
+      # Step 5: Download authors.xlsx
+      - name: Download authors.xlsx
+        run: |
+          curl -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+           -L -o authors.xlsx \
+            https://raw.githubusercontent.com/MGMResorts/mgm-af-migrations-via-actions/main/authors.xlsx
+          ls -l authors.xlsx
+          file authors.xlsx 
+
+      # Step 6: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Step 7: Install Required Dependencies
+      - name: Install Required Dependencies
+        run: pip install git-filter-repo pandas openpyxl
+
+      # Step 8: Print Authors Before Rewrite
+      - name: Print Authors Before Rewrite
+        run: |
+          echo "Authors Before Rewrite:"
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
+
+      # Step 9: Extract Unique Authors to a File
+      - name: Fetch Unique Authors
+        run: |
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq > target-repo/authors.txt
+
+      # Step 10: Process Excel and Generate Mailmap File
+      - name: Process Excel and Generate Mailmap
+        run: |
+          python3 - <<EOF
+          import pandas as pd
+
+          # Load Excel file
+          excel_file = "authors.xlsx"
+          df = pd.read_excel(excel_file)
+
+          # Read extracted authors from previous step
+          with open("target-repo/authors.txt", "r") as f:
+              extracted_authors = f.read().splitlines()
+
+          # Prepare mappings
+          mailmap = ""
+          for index, row in df.iterrows():
+              # Extract login, name, and email
+              login = str(row['login']).strip() if pd.notna(row['login']) else ""
+              name = str(row['name']).strip() if pd.notna(row['name']) else ""
+              email = str(row['saml_name_id']).strip() if pd.notna(row['saml_name_id']) else ""
+
+              # Generate the new name and email
+              if email:
+                  new_name = email.split('@')[0]  # Prefix before '@'
+                  new_email = email  # Use the email directly
+
+                  # Match authors from Git logs and replace them
+                  for author in extracted_authors:
+                      git_name, git_email = author.rsplit(" <", 1)
+                      git_email = git_email.rstrip(">")
+
+                      # Match either login or name
+                      if login and (login in git_name or login in git_email):
+                          mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
+                      elif name and (name in git_name or name in git_email):
+                          mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
+
+          # Write mailmap file
+          with open("target-repo/mailmap.txt", "w") as f:
+              f.write(mailmap)
+
+          print("Generated Mailmap File:")
+          print(mailmap)
+          EOF
+
+      # Step 11: Process Each Branch
+      - name: Process Each Branch
+        run: |
+          while IFS= read -r branch; do
+            echo "Processing branch: $branch"
+            
+            # Checkout the branch
+            git -C target-repo checkout $branch
+            
+            # Rewrite commit history
+            if [ -f "target-repo/mailmap.txt" ]; then
+              git -C target-repo filter-repo --mailmap target-repo/mailmap.txt --force
+            fi
+
+            # Push changes
+            git -C target-repo push origin $branch --force
+          done < target-repo/branches.txt
+
+      # Step 12: Print Authors After Rewrite
+      - name: Print Authors After Rewrite
+        run: |
+          echo "Authors After Rewrite:"
+          git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq
