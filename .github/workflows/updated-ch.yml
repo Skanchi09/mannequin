@@ -31,22 +31,48 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           repository: ${{ github.event.client_payload.target_org }}/${{ github.event.client_payload.repo_name }}
           fetch-depth: 0 
-          path: target-repo 
+          path: target-repo
+          sparse-checkout-cone-mode: false
 
-      # Step 3: Fetch All Branches
+      - name: Debug Workspace Contents
+        run: |
+          echo "Listing workspace contents:"
+          ls -la
+          echo "Listing target-repo directory contents:"
+          ls -la target-repo
+      
+      - name: Verify target-repo Directory
+        run: |
+          if [ ! -d "target-repo" ]; then
+            echo "Error: target-repo directory not found!"
+            exit 1
+          fi
+      
       - name: Fetch All Branches
         run: |
           cd target-repo
           git fetch --all --prune
-
-      # Step 4: List All Branches
+      
       - name: List All Branches
-        id: list-branches
         run: |
           cd target-repo
           git branch -r | grep -v '\->' | awk -F'/' '{print $2}' | sort | uniq > branches.txt
           cat branches.txt
-        working-directory: target-repo
+
+      # # Step 3: Fetch All Branches
+      # - name: Fetch All Branches
+      #   run: |
+      #     cd target-repo
+      #     git fetch --all --prune
+
+      # # Step 4: List All Branches
+      # - name: List All Branches
+      #   id: list-branches
+      #   run: |
+      #     cd target-repo
+      #     git branch -r | grep -v '\->' | awk -F'/' '{print $2}' | sort | uniq > branches.txt
+      #     cat branches.txt
+      #   working-directory: target-repo
 
       # Step 5: Download authors.xlsx
       - name: Download authors.xlsx
