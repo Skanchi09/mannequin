@@ -104,72 +104,112 @@ jobs:
         run: |
           git -C target-repo log --all --pretty="%an <%ae>" | sort | uniq > target-repo/authors.txt
 
-      # Step 10: Process Excel and Generate Mailmap File
       - name: Process Excel and Generate Mailmap
         run: |
           python3 - <<EOF
           import pandas as pd
-
+      
           # Load Excel file
           excel_file = "authors.xlsx"
           df = pd.read_excel(excel_file)
-
-          # Read extracted authors from previous step
+      
+          # Read extracted authors
           with open("target-repo/authors.txt", "r") as f:
               extracted_authors = f.read().splitlines()
-
+      
           # Prepare mappings
           mailmap = ""
           for index, row in df.iterrows():
-              # Extract login, name, and email
               login = str(row['login']).strip() if pd.notna(row['login']) else ""
               name = str(row['name']).strip() if pd.notna(row['name']) else ""
               email = str(row['saml_name_id']).strip() if pd.notna(row['saml_name_id']) else ""
-
-              # Generate the new name and email
+      
               if email:
-                  new_name = email.split('@')[0]  # Prefix before '@'
-                  new_email = email  # Use the email directly
-
-                  # Match authors from Git logs and replace them
+                  new_name = email.split('@')[0]
+                  new_email = email
+      
                   for author in extracted_authors:
                       git_name, git_email = author.rsplit(" <", 1)
                       git_email = git_email.rstrip(">")
-
-                      # Match either login or name
+      
                       if login and (login in git_name or login in git_email):
                           mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
                       elif name and (name in git_name or name in git_email):
                           mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
-
-          # Write mailmap file
-          with open("target-repo/mailmap.txt", "w") as f:
+      
+          # Write mailmap file to workspace root
+          with open("mailmap.txt", "w") as f:
               f.write(mailmap)
-
+      
           print("Generated Mailmap File:")
           print(mailmap)
           EOF
 
+      # # Step 10: Process Excel and Generate Mailmap File
+      # - name: Process Excel and Generate Mailmap
+      #   run: |
+      #     python3 - <<EOF
+      #     import pandas as pd
+
+      #     # Load Excel file
+      #     excel_file = "authors.xlsx"
+      #     df = pd.read_excel(excel_file)
+
+      #     # Read extracted authors from previous step
+      #     with open("target-repo/authors.txt", "r") as f:
+      #         extracted_authors = f.read().splitlines()
+
+      #     # Prepare mappings
+      #     mailmap = ""
+      #     for index, row in df.iterrows():
+      #         # Extract login, name, and email
+      #         login = str(row['login']).strip() if pd.notna(row['login']) else ""
+      #         name = str(row['name']).strip() if pd.notna(row['name']) else ""
+      #         email = str(row['saml_name_id']).strip() if pd.notna(row['saml_name_id']) else ""
+
+      #         # Generate the new name and email
+      #         if email:
+      #             new_name = email.split('@')[0]  # Prefix before '@'
+      #             new_email = email  # Use the email directly
+
+      #             # Match authors from Git logs and replace them
+      #             for author in extracted_authors:
+      #                 git_name, git_email = author.rsplit(" <", 1)
+      #                 git_email = git_email.rstrip(">")
+
+      #                 # Match either login or name
+      #                 if login and (login in git_name or login in git_email):
+      #                     mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
+      #                 elif name and (name in git_name or name in git_email):
+      #                     mailmap += f"{new_name} <{new_email}> {git_name} <{git_email}>\n"
+
+      #     # Write mailmap file
+      #     with open("target-repo/mailmap.txt", "w") as f:
+      #         f.write(mailmap)
+
+      #     print("Generated Mailmap File:")
+      #     print(mailmap)
+      #     EOF
+
+      - name: Debug Mailmap File
+        run: |
+          echo "Checking mailmap.txt in workspace:"
+          ls -la
+          cat mailmap.txt
+      
       - name: Process Each Branch
         run: |
           while IFS= read -r branch; do
             echo "Processing branch: $branch"
-            
-            # Checkout the branch
             git -C target-repo checkout $branch
-            
-            # Rewrite commit history
             if [ -f "mailmap.txt" ]; then
               git -C target-repo filter-repo --mailmap $(pwd)/mailmap.txt --force
             else
               echo "Error: mailmap.txt not found!"
               exit 1
             fi
-      
-            # Push changes
             git -C target-repo push origin $branch --force
           done < target-repo/branches.txt
-
 
       # Step 12: Print Authors After Rewrite
       - name: Print Authors After Rewrite
