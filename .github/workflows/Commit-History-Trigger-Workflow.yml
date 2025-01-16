@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      repo_name: "pd-payments-audit-trail"
-      repo_org: "MGMResorts"
-      target_org: "MGMResorts"
+      repo_name: "mannequin"
+      repo_org: "Skanchi09"
+      target_org: "Skanchi09"
 
     steps:
       - name: Set Outputs
         run: |
-          echo "repo_name=pd-payments-audit-trail" >> $GITHUB_ENV
-          echo "repo_org=MGMResorts" >> $GITHUB_ENV
-          echo "target_org=MGMResorts" >> $GITHUB_ENV
+          echo "repo_name=mannequin" >> $GITHUB_ENV
+          echo "repo_org=Skanchi09" >> $GITHUB_ENV
+          echo "target_org=Skanchi09" >> $GITHUB_ENV
 
   # Step 2: Migrate Job
   migrate:
