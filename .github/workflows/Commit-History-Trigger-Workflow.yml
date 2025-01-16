@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      repo_name: "mannequin"
-      repo_org: "Skanchi09"
-      target_org: "Skanchi09"
+      repo_name: "pd-payments-audit-trail"
+      repo_org: "MGMResorts"
+      target_org: "MGMResorts"
 
     steps:
       - name: Set Outputs
