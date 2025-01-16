@@ -201,15 +201,38 @@ jobs:
         run: |
           while IFS= read -r branch; do
             echo "Processing branch: $branch"
+            
+            # Checkout the branch
             git -C target-repo checkout $branch
+            
+            # Rewrite commit history
             if [ -f "mailmap.txt" ]; then
               git -C target-repo filter-repo --mailmap $(pwd)/mailmap.txt --force
             else
               echo "Error: mailmap.txt not found!"
               exit 1
             fi
+      
+            # Re-add origin remote
+            git -C target-repo remote add origin https://github.com/${{ github.event.client_payload.target_org }}/${{ github.event.client_payload.repo_name }}.git
+      
+            # Push changes
             git -C target-repo push origin $branch --force
           done < target-repo/branches.txt
+ 
+      # - name: Process Each Branch
+      #   run: |
+      #     while IFS= read -r branch; do
+      #       echo "Processing branch: $branch"
+      #       git -C target-repo checkout $branch
+      #       if [ -f "mailmap.txt" ]; then
+      #         git -C target-repo filter-repo --mailmap $(pwd)/mailmap.txt --force
+      #       else
+      #         echo "Error: mailmap.txt not found!"
+      #         exit 1
+      #       fi
+      #       git -C target-repo push origin $branch --force
+      #     done < target-repo/branches.txt
 
       # Step 12: Print Authors After Rewrite
       - name: Print Authors After Rewrite
