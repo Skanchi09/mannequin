@@ -28,7 +28,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.MY_TOKEN }}
           repository: ${{ github.event.client_payload.target_org }}/${{ github.event.client_payload.repo_name }}
           fetch-depth: 0 
           path: target-repo
