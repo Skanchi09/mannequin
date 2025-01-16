@@ -20,9 +20,9 @@ jobs:
     steps:
       - name: Set Outputs
         run: |
-          echo "repo_name=mannequin" >> $GITHUB_ENV
-          echo "repo_org=Skanchi09" >> $GITHUB_ENV
-          echo "target_org=Skanchi09" >> $GITHUB_ENV
+          echo "repo_name=pd-payments-audit-trail" >> $GITHUB_ENV
+          echo "repo_org=MGMResorts" >> $GITHUB_ENV
+          echo "target_org=MGMResorts" >> $GITHUB_ENV
 
   # Step 2: Migrate Job
   migrate:
@@ -59,7 +59,7 @@ jobs:
       - name: Trigger Commit-history-mapping in Target
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.MY_PAT }}
+          token: ${{ secrets.MY_TOKEN }}
           event-type: Commit-history-mapping-updated
           client-payload: |
             {
