@@ -60,7 +60,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.MY_PAT }}
-          event-type: Commit-history-mapping
+          event-type: Commit-history-mapping-updated
           client-payload: |
             {
               "repo_name": "${{ needs.migrate.outputs.repo_name }}",
