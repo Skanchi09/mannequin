@@ -79,26 +79,24 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fetch = require('node-fetch');
-
             // Define the parameters
             const repo = process.env.GITHUB_REPOSITORY;
             const workflowRunUrl = `https://api.github.com/repos/${repo}/actions/runs`;
             const token = process.env.GITHUB_TOKEN;
-
+      
             // Fetch the latest workflow run
             const response = await fetch(`${workflowRunUrl}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
             const runs = await response.json();
-
+      
             // Get the workflow run for the triggered event
             const triggeredRun = runs.workflow_runs.find(
               (run) =>
                 run.event === "repository_dispatch" &&
                 run.status !== "completed"
             );
-
+      
             if (!triggeredRun) {
               core.setFailed("Triggered workflow did not start or was not found.");
             } else {
@@ -106,6 +104,8 @@ jobs:
               core.setOutput("run_id", triggeredRun.id);
               core.setOutput("run_status", triggeredRun.status);
             }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Monitor Workflow Status
         run: |
