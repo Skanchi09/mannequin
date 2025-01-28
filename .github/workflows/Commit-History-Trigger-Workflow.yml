@@ -63,9 +63,9 @@ jobs:
               "target_org": "${{ needs.migrate.outputs.target_org }}"
             }
 
-      # Wait before monitoring to ensure the workflow is registered
-      - name: Wait for Workflow to Start
-        run: sleep 30
+      # # Wait before monitoring to ensure the workflow is registered
+      # - name: Wait for Workflow to Start
+      #   run: sleep 10
 
       # Debug: List all checks for the ref
       - name: List All Checks on Ref
