@@ -67,15 +67,16 @@ jobs:
       # - name: Wait for Workflow to Start
       #   run: sleep 10
 
-      - name: Wait for Triggered Workflow
-        uses: pjgao/wait-for-workflow-run@v1
+      - id: wait
+        uses: uplift-ltd/wait-for-workflow-run-action@v1
         with:
-          repo: ${{ github.repository }} 
-          workflow: 'Extract Authors and Rewrite Commit History for All Branches' 
-          ref: ${{ github.ref }}         
-          token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-          timeout: 900     
+          owner: Skanchi09                      # GitHub username/organization
+          repo: mannequin                       # Repository where the workflow is triggered
+          workflow_id: "Extract Authors and Rewrite Commit History for All Branches" # Name of the workflow file
+          ref: ${{ github.ref }}                # Branch reference (e.g., refs/heads/main)
+          token: ${{ secrets.GITHUB_TOKEN }}    # Token with actions:read permission
+          timeout: 900                          # Timeout in seconds (default: 15 minutes)
+          interval: 10           
 
       # Debug: List all checks for the ref
       - name: List All Checks on Ref
