@@ -73,7 +73,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           interval: 2s              # Poll every 10 seconds
           timeout: 900s              # Timeout after 15 minutes
-          delay: 30s  
+          delay: 5s  
            
 
       # Debug: List all checks for the ref
