@@ -67,15 +67,13 @@ jobs:
       # - name: Wait for Workflow to Start
       #   run: sleep 10
 
-      - name: Wait for Triggered Workflow
-        uses: peter-evans/wait-for-check@v2.1.0
+      - name: Wait for Workflow Checks
+        uses: poseidon/wait-for-status-checks@v0.6.0
         with:
-          check-name: Commit History Mapping Workflow # Name of the triggered workflow
-          ref: ${{ github.ref }}                    # Reference (branch)
-          repo: ${{ github.repository }}            # Repository where the workflow is triggered
-          token: ${{ secrets.GITHUB_TOKEN }}        # GitHub token for authentication
-          wait-interval: 10                         # Time in seconds between status checks
-          timeout: 900    
+          token: ${{ secrets.GITHUB_TOKEN }}
+          interval: 10s              # Poll every 10 seconds
+          timeout: 900s              # Timeout after 15 minutes
+          delay: 30s  
            
 
       # Debug: List all checks for the ref
