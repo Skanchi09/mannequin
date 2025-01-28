@@ -87,7 +87,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: extract-authors
+          check-regexp: ^extract-authors$
           ref: ${{ github.ref }}
           wait-interval: 10
           verbose: true
