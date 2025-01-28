@@ -96,10 +96,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ steps.fetch-sha.outputs.sha }}
-          timeout: 900         # Timeout in seconds (15 minutes)
-          cancelWorkflow: false # Set to true if you want to cancel the current workflow if the monitored workflow fails
-                      # Timeout in seconds (default: 15 minutes)
-          interval: 10           
+          cancelWorkflow: false # Cancel the current workflow if the monitored workflow fails
+           
 
       # Debug: List all checks for the ref
       - name: List All Checks on Ref
