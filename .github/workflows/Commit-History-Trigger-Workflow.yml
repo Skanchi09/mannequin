@@ -71,13 +71,12 @@ jobs:
       - name: Wait for Triggered Workflow to Complete
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
-          ref: ${{ github.ref }} 
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           check-name: Commit-history-mapping-updated
-          repo: ${{ github.repository }} 
-          token: ${{ secrets.GITHUB_TOKEN }} 
-          timeout: 600 
-          interval: 10 
-
+          ref: ${{ github.ref }}
+          timeout: 600
+          wait-interval: 10
+          
       - name: Proceed to Next Job
         run: echo "Triggered workflow succeeded. Proceeding to the next steps!"
   
