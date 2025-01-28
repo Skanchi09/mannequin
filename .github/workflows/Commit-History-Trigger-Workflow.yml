@@ -72,7 +72,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: Extract Authors and Rewrite Commit History for All Branches
+          check-name: extract-authors
           ref: ${{ github.ref }}
           wait-interval: 10
           verbose: true
