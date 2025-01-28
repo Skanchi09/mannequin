@@ -68,6 +68,9 @@ jobs:
               "target_org": "${{ needs.migrate.outputs.target_org }}"
             }
 
+      - name: Wait for Workflow to Start
+        run: sleep 30
+      
       - name: Wait for Triggered Workflow
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
