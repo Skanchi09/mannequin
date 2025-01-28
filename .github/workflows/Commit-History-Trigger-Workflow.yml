@@ -83,7 +83,15 @@ jobs:
           check-name: extract-authors # Exact name of the job in the triggered workflow
           ref: ${{ github.ref }}
           wait-interval: 10
+          allowed-conclusions: success, skipped, failure # Allow failure for debugging
           verbose: true
+
+      # Conditional Handling for Failures
+      - name: Handle Failed Job
+        if: failure()
+        run: |
+          echo "The 'extract-authors' job failed. Investigate the logs."
+          exit 1
 
       # Alternative Monitoring (if wait-on-check-action fails)
       - name: Monitor Workflow Status (Fallback)
@@ -99,6 +107,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 branch: context.ref.replace('refs/heads/', ''),
+                workflow_id: "extract-authors", # Specify the workflow name or ID
                 status: 'in_progress',
               });
 
@@ -125,6 +134,7 @@ jobs:
       - name: Proceed to Next Job
         if: success()
         run: echo "Triggered workflow succeeded. Proceeding to the next steps!"
+
 
 # name: Commit History Mapping Workflow
 
