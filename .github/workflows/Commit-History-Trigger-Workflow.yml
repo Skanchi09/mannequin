@@ -68,15 +68,15 @@ jobs:
               "target_org": "${{ needs.migrate.outputs.target_org }}"
             }
 
-      - name: Wait for Triggered Workflow to Complete
+      - name: Wait for Triggered Workflow
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: Commit-history-mapping-updated
+          check-name: Extract Authors and Rewrite Commit History for All Branches
           ref: ${{ github.ref }}
-          timeout: 600
           wait-interval: 10
-          
+          verbose: true
+            
       - name: Proceed to Next Job
         run: echo "Triggered workflow succeeded. Proceeding to the next steps!"
   
