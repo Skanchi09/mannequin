@@ -75,13 +75,13 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: checks } = await github.checks.listForRef({
+            const checks = await github.rest.checks.listForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.sha,
             });
             console.log("Available checks:");
-            checks.check_runs.forEach(run => console.log(`- ${run.name}`));
+            checks.data.check_runs.forEach(run => console.log(`- ${run.name}`));
   
       - name: Wait for Triggered Workflow
         uses: lewagon/wait-on-check-action@v1.3.4
