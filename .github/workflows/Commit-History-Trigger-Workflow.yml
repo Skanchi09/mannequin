@@ -70,7 +70,7 @@ jobs:
 
       - name: Wait for Workflow to Start
         run: sleep 30
-  
+      
       - name: List All Checks on Ref
         uses: actions/github-script@v6
         with:
@@ -82,15 +82,16 @@ jobs:
             });
             console.log("Available checks:");
             checks.data.check_runs.forEach(run => console.log(`- ${run.name}`));
-  
+      
       - name: Wait for Triggered Workflow
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: extract-authors # Update based on `List All Checks` output
+          check-name: extract-authors
           ref: ${{ github.ref }}
           wait-interval: 10
           verbose: true
+
             
       - name: Proceed to Next Job
         run: echo "Triggered workflow succeeded. Proceeding to the next steps!"
