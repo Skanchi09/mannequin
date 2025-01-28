@@ -29,12 +29,12 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     needs: [prepare]
-    
+
     outputs:
       repo_name: ${{ needs.prepare.outputs.repo_name }}
       repo_org: ${{ needs.prepare.outputs.repo_org }}
       target_org: ${{ needs.prepare.outputs.target_org }}
-      
+
     steps:
       - name: Print Variables
         run: |
@@ -85,22 +85,15 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: extract-authors # Exact name of the job in the triggered workflow
+          check-name: extract-authors # Use exact name from "List All Checks"
           ref: ${{ github.ref }}
           wait-interval: 10
           allowed-conclusions: success, skipped, failure # Allow failure for debugging
           verbose: true
 
-      # Conditional Handling for Failures
-      - name: Handle Failed Job
-        if: failure()
-        run: |
-          echo "The 'extract-authors' job failed. Investigate the logs."
-          exit 1
-
       # Alternative Monitoring (if wait-on-check-action fails)
       - name: Monitor Workflow Status (Fallback)
-        if: always() # Ensures this step runs even if the previous step fails
+        if: failure() # Runs only if the wait-on-check-action fails
         uses: actions/github-script@v6
         with:
           script: |
@@ -111,12 +104,11 @@ jobs:
               const { data: runs } = await github.rest.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                branch: context.ref.replace('refs/heads/', ''),
                 workflow_id: "extract-authors", # Specify the workflow name or ID
-                status: 'in_progress',
+                branch: context.ref.replace('refs/heads/', ''),
               });
 
-              const run = runs.workflow_runs.find(r => r.name === 'extract-authors');
+              const run = runs.workflow_runs.find(r => r.head_branch === context.ref.replace('refs/heads/', '') && r.name === 'extract-authors');
               if (run) {
                 console.log(`Found workflow: ${run.html_url}`);
                 if (run.status === 'completed') {
@@ -139,6 +131,7 @@ jobs:
       - name: Proceed to Next Job
         if: success()
         run: echo "Triggered workflow succeeded. Proceeding to the next steps!"
+
 
 
 # name: Commit History Mapping Workflow
