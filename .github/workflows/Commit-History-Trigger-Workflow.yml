@@ -67,6 +67,21 @@ jobs:
       # - name: Wait for Workflow to Start
       #   run: sleep 10
 
+
+      - name: Wait for Workflow to Complete
+        uses: NathanFirmo/wait-for-other-action@v1.0.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: 'updated-ch.yml'  
+          repo: ${{ github.repository }}   
+          ref: ${{ github.ref }}           
+          wait-interval: 10                
+          timeout: 900  
+
+
+
+#Method 1: poseidon/wait-for-status-check
+
       - name: Wait for Workflow Checks
         uses: poseidon/wait-for-status-checks@v0.6.0
         with:
@@ -91,6 +106,8 @@ jobs:
             console.log("Available checks:");
             checks.check_runs.forEach(run => console.log(`- ${run.name}`));
 
+#Method 2: lewagon/wait-on-check-action@v1.3.4
+    
       # Monitor the triggered workflow with wait-on-check-action
       - name: Wait for Triggered Workflow
         uses: lewagon/wait-on-check-action@v1.3.4
@@ -102,41 +119,7 @@ jobs:
           allowed-conclusions: success, skipped, failure # Allow failure for debugging
           verbose: true
 
-      # Alternative Monitoring (if wait-on-check-action fails)
-      - name: Monitor Workflow Status (Fallback)
-        if: failure() # Runs only if the wait-on-check-action fails
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-            let completed = false;
-
-            while (!completed) {
-              const { data: runs } = await github.rest.actions.listWorkflowRuns({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                workflow_id: "extract-authors", # Specify the workflow name or ID
-                branch: context.ref.replace('refs/heads/', ''),
-              });
-
-              const run = runs.workflow_runs.find(r => r.head_branch === context.ref.replace('refs/heads/', '') && r.name === 'extract-authors');
-              if (run) {
-                console.log(`Found workflow: ${run.html_url}`);
-                if (run.status === 'completed') {
-                  console.log(`Workflow completed with conclusion: ${run.conclusion}`);
-                  completed = true;
-                  if (run.conclusion !== 'success') {
-                    throw new Error('Workflow failed');
-                  }
-                } else {
-                  console.log(`Workflow still in progress...`);
-                }
-              } else {
-                console.log(`No workflow run found for 'extract-authors' yet.`);
-              }
-
-              await delay(10000); // Wait 10 seconds before checking again
-            }
+     
 
       # Proceed to next steps if successful
       - name: Proceed to Next Job
